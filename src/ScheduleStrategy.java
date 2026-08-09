@@ -1,10 +1,6 @@
 import java.util.List;
 
 public interface ScheduleStrategy {
-
-    List<Match> generateSchedule(
-        List<Team> teams
-    );
-
+    List<Match> generateSchedule(List<Team> teams);
     String getFormatName();
 }

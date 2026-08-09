@@ -1,5 +1,3 @@
 public enum MatchStatus {
-    WAITING,
-    SCHEDULED,
-    COMPLETED
+    WAITING, SCHEDULED, COMPLETED
 }
