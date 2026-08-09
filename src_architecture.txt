@@ -1,0 +1,91 @@
+Sports Tournament Management System - File Responsibilities
+
+- TournamentApp.java
+  - Entry point for the program.
+  - Creates the TournamentManager and TournamentCLI.
+  - Starts the command-line application.
+
+- TournamentCLI.java
+  - Handles all command-line input and output.
+  - Displays menus and reads the user's choices.
+  - Lets users create tournaments, add teams, generate schedules, record scores, view schedules/brackets, and view standings.
+  - Delegates tournament operations to TournamentManager instead of containing the main business logic.
+
+- TournamentManager.java
+  - Coordinates and manages multiple tournaments.
+  - Creates and finds tournaments.
+  - Delegates actions such as adding teams, generating schedules, and recording scores to the correct Tournament object.
+  - Uses StandingsService to retrieve tournament standings.
+
+- Tournament.java
+  - Represents one sports tournament.
+  - Stores the tournament name, sport, status, teams, matches, and scheduling strategy.
+  - Allows teams to be registered while the tournament is in registration.
+  - Uses the selected ScheduleStrategy to generate the tournament schedule.
+  - Records match scores and updates the tournament status when all matches are complete.
+
+- TournamentStatus.java
+  - Enum representing the current state of a tournament.
+  - Possible values: REGISTRATION, IN_PROGRESS, and COMPLETED.
+
+- Team.java
+  - Represents a team participating in a tournament.
+  - Stores the team's ID, name, and coach name.
+  - Allows team information to be updated.
+  - Provides getter methods for team information.
+
+- Match.java
+  - Represents a standard match between two teams.
+  - Stores the match number, round number, teams, scores, and match status.
+  - Records match scores.
+  - Determines the winner of a completed match.
+  - Determines whether a match is ready to play or completed.
+  - Allows teams to be assigned to match slots.
+
+- BracketMatch.java
+  - Specialized type of Match used for single-elimination tournaments.
+  - Stores a reference to the next bracket match.
+  - Prevents elimination matches from ending in a tie.
+  - Automatically advances the winner into the correct slot of the next match.
+
+- MatchStatus.java
+  - Enum representing the current state of a match.
+  - Possible values: WAITING, SCHEDULED, and COMPLETED.
+
+- ScheduleStrategy.java
+  - Interface defining how tournament schedules are generated.
+  - Allows different scheduling algorithms to be used without changing Tournament.
+  - Defines generateSchedule() and getFormatName().
+
+- RoundRobinScheduler.java
+  - Implements ScheduleStrategy for round-robin tournaments.
+  - Generates matches so every team plays every other team once.
+
+- SingleEliminationScheduler.java
+  - Implements ScheduleStrategy for single-elimination bracket tournaments.
+  - Randomizes the participating teams.
+  - Creates all bracket rounds and BracketMatch objects.
+  - Connects each match to the appropriate match in the following round.
+  - Currently expects a power-of-two number of teams such as 2, 4, 8, or 16.
+
+- Standing.java
+  - Represents one team's statistics in the standings.
+  - Stores games played, wins, draws, losses, points, scores for, and scores against.
+  - Updates statistics after wins, draws, and losses.
+  - Calculates score difference.
+
+- StandingsPolicy.java
+  - Interface defining how tournament standings are calculated.
+  - Allows different ranking or point systems to be added later.
+
+- StandardStandingsPolicy.java
+  - Implements StandingsPolicy using the standard points system.
+  - Gives 3 points for a win, 1 point for a draw, and 0 points for a loss.
+  - Calculates statistics from completed matches.
+  - Sorts teams by points and then score difference.
+
+- StandingsService.java
+  - Coordinates standings calculations for a tournament.
+  - Uses a StandingsPolicy rather than depending on one specific standings implementation.
+  - Returns the ordered standings.
+  - Can return the current leading team.
