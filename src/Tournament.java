@@ -24,104 +24,72 @@ public class Tournament
         ScheduleStrategy scheduleStrategy
     ) {
 
-        if (
-            name == null
-            || name.isBlank()
-        ) {
-
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(
-                "Tournament name cannot be empty."
+                "Tournament name cannot be blank. Please enter a tournament name."
             );
         }
 
-        if (
-            sport == null
-            || sport.isBlank()
-        ) {
-
+        if (sport == null || sport.isBlank()) {
             throw new IllegalArgumentException(
-                "Sport cannot be empty."
+                "Sport cannot be blank. Please enter the sport for this tournament."
             );
         }
 
-        this.name =
-            name.trim();
+        if (scheduleStrategy == null) {
+            throw new IllegalArgumentException(
+                "Tournament format is missing. Please choose Round Robin or Single Elimination."
+            );
+        }
 
-        this.sport =
-            sport.trim();
+        this.name = name.trim();
+        this.sport = sport.trim();
+        this.scheduleStrategy = scheduleStrategy;
 
-        this.scheduleStrategy =
-            scheduleStrategy;
+        teams = new ArrayList<>();
+        matches = new ArrayList<>();
 
-        teams =
-            new ArrayList<>();
-
-        matches =
-            new ArrayList<>();
-
-        status =
-            TournamentStatus.REGISTRATION;
+        status = TournamentStatus.REGISTRATION;
     }
 
-    public void addTeam(
-        Team team
-    ) {
+    public void addTeam(Team team) {
 
-        if (
-            status
-            != TournamentStatus.REGISTRATION
-        ) {
-
+        if (status != TournamentStatus.REGISTRATION) {
             throw new IllegalStateException(
-                "Teams cannot be added after "
-                + "the tournament begins."
+                "Teams can only be added while the tournament is in REGISTRATION. "
+                + "A schedule has already been generated for this tournament."
             );
         }
 
-        for (
-            Team existingTeam
-            : teams
-        ) {
+        for (Team existingTeam : teams) {
 
-            if (
-                existingTeam
-                    .getName()
-                    .equalsIgnoreCase(
-                        team.getName()
-                    )
-            ) {
-
+            if (existingTeam.getName().equalsIgnoreCase(team.getName())) {
                 throw new IllegalArgumentException(
-                    "Team already exists."
+                    "A team named \"" + team.getName()
+                    + "\" is already registered in this tournament. Please use a different team name."
                 );
             }
         }
 
-        teams.add(
-            team
-        );
+        teams.add(team);
     }
 
     public void generateSchedule() {
 
-        if (
-            status
-            != TournamentStatus.REGISTRATION
-        ) {
-
+        if (status != TournamentStatus.REGISTRATION) {
             throw new IllegalStateException(
-                "Schedule has already been generated."
+                "The schedule cannot be generated again because this tournament has already started."
             );
         }
 
-        matches =
-            scheduleStrategy
-                .generateSchedule(
-                    teams
-                );
+        if (teams.size() < 2) {
+            throw new IllegalStateException(
+                "A schedule cannot be generated yet. Register at least 2 teams first."
+            );
+        }
 
-        status =
-            TournamentStatus.IN_PROGRESS;
+        matches = scheduleStrategy.generateSchedule(teams);
+        status = TournamentStatus.IN_PROGRESS;
     }
 
     public void recordMatchScore(
@@ -130,39 +98,30 @@ public class Tournament
         int awayScore
     ) {
 
-        Match match =
-            findMatch(
-                matchNumber
+        Match match = findMatch(matchNumber);
+
+        if (match.isCompleted()) {
+            throw new IllegalStateException(
+                "Match " + matchNumber + " already has a recorded final score."
             );
+        }
 
-        match.recordScore(
-            homeScore,
-            awayScore
-        );
-
+        match.recordScore(homeScore, awayScore);
         checkCompletion();
     }
 
-    public Match findMatch(
-        int matchNumber
-    ) {
+    public Match findMatch(int matchNumber) {
 
-        for (
-            Match match
-            : matches
-        ) {
+        for (Match match : matches) {
 
-            if (
-                match.getMatchNumber()
-                == matchNumber
-            ) {
-
+            if (match.getMatchNumber() == matchNumber) {
                 return match;
             }
         }
 
         throw new IllegalArgumentException(
-            "Match not found."
+            "Match " + matchNumber
+            + " was not found in this tournament. Please choose a match number shown in the schedule."
         );
     }
 
@@ -172,18 +131,14 @@ public class Tournament
             return;
         }
 
-        for (
-            Match match
-            : matches
-        ) {
+        for (Match match : matches) {
 
             if (!match.isCompleted()) {
                 return;
             }
         }
 
-        status =
-            TournamentStatus.COMPLETED;
+        status = TournamentStatus.COMPLETED;
     }
 
     public String getName() {
@@ -199,42 +154,25 @@ public class Tournament
     }
 
     public String getFormatName() {
-
-        return scheduleStrategy
-            .getFormatName();
+        return scheduleStrategy.getFormatName();
     }
 
     public List<Team> getTeams() {
-
-        return Collections
-            .unmodifiableList(
-                teams
-            );
+        return Collections.unmodifiableList(teams);
     }
 
     public List<Match> getMatches() {
-
-        return Collections
-            .unmodifiableList(
-                matches
-            );
+        return Collections.unmodifiableList(matches);
     }
 
     public List<Match> getCompletedMatches() {
 
-        List<Match> completed =
-            new ArrayList<>();
+        List<Match> completed = new ArrayList<>();
 
-        for (
-            Match match
-            : matches
-        ) {
+        for (Match match : matches) {
 
             if (match.isCompleted()) {
-
-                completed.add(
-                    match
-                );
+                completed.add(match);
             }
         }
 
@@ -243,7 +181,6 @@ public class Tournament
 
     @Override
     public String toString() {
-
         return name
             + " | "
             + sport

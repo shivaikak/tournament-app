@@ -38,7 +38,7 @@ public class BracketMatch extends Match {
 
         if (homeScore == awayScore) {
             throw new IllegalArgumentException(
-                "Elimination matches cannot end in a tie."
+                "Single-elimination matches cannot end in a tie. Please enter a final score with one winning team."
             );
         }
 

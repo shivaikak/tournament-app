@@ -115,7 +115,7 @@ public class TournamentCLI {
             ) {
 
                 System.out.println(
-                    "Error: "
+                    "Unable to complete that action: "
                     + e.getMessage()
                 );
             }
@@ -357,7 +357,7 @@ public class TournamentCLI {
             ) {
 
                 System.out.println(
-                    "Error: "
+                    "Unable to complete that action: "
                     + e.getMessage()
                 );
             }
@@ -578,56 +578,39 @@ public class TournamentCLI {
         Tournament tournament
     ) {
 
-        if (
-            tournament
-                .getMatches()
-                .isEmpty()
-        ) {
+        if (tournament.getMatches().isEmpty()) {
 
             System.out.println();
-
             System.out.println(
-                "No schedule has been generated yet."
+                "No schedule has been generated yet. Generate the schedule before recording scores."
             );
 
             waitForBack();
-
             return;
         }
 
         System.out.println();
-
         System.out.println(
             "=== Record Match Score ==="
         );
 
-        boolean foundIncomplete =
-            false;
+        boolean foundIncomplete = false;
 
-        for (
-            Match match
-            : tournament.getMatches()
-        ) {
+        for (Match match : tournament.getMatches()) {
 
             if (!match.isCompleted()) {
-
-                System.out.println(
-                    match
-                );
-
-                foundIncomplete =
-                    true;
+                System.out.println(match);
+                foundIncomplete = true;
             }
         }
 
         if (!foundIncomplete) {
 
             System.out.println(
-                "All matches are already completed."
+                "There are no matches left to score. Every match in this tournament is already completed."
             );
 
             waitForBack();
-
             return;
         }
 
@@ -635,17 +618,60 @@ public class TournamentCLI {
 
         int matchNumber =
             readInt(
-                "Match number: "
+                "Enter the match number you want to score: "
             );
+
+        Match selectedMatch =
+            tournament.findMatch(
+                matchNumber
+            );
+
+        if (selectedMatch.isCompleted()) {
+            throw new IllegalStateException(
+                "Match " + matchNumber
+                + " has already been completed. Please select one of the unfinished matches shown above."
+            );
+        }
+
+        if (!selectedMatch.isReadyToPlay()) {
+            throw new IllegalStateException(
+                "Match " + matchNumber
+                + " is not ready yet because one or both teams are still TBD. "
+                + "Complete the earlier bracket match(es) first."
+            );
+        }
+
+        String homeTeamName =
+            selectedMatch
+                .getHomeTeam()
+                .getName();
+
+        String awayTeamName =
+            selectedMatch
+                .getAwayTeam()
+                .getName();
+
+        System.out.println();
+        System.out.println(
+            "Selected Match: "
+            + homeTeamName
+            + " (Home) vs "
+            + awayTeamName
+            + " (Away)"
+        );
 
         int homeScore =
             readInt(
-                "Home team score: "
+                "Enter score for "
+                + homeTeamName
+                + " (Home): "
             );
 
         int awayScore =
             readInt(
-                "Away team score: "
+                "Enter score for "
+                + awayTeamName
+                + " (Away): "
             );
 
         manager.recordScore(
@@ -656,9 +682,16 @@ public class TournamentCLI {
         );
 
         System.out.println();
-
         System.out.println(
-            "Score recorded successfully."
+            "Score recorded successfully: "
+            + homeTeamName
+            + " (Home) "
+            + homeScore
+            + " - "
+            + awayScore
+            + " "
+            + awayTeamName
+            + " (Away)"
         );
 
         waitForBack();
@@ -864,7 +897,7 @@ public class TournamentCLI {
             ) {
 
                 System.out.println(
-                    "Enter a valid number."
+                    "Invalid input. Please enter a whole number using digits only."
                 );
             }
         }

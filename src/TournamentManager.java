@@ -11,11 +11,8 @@ public class TournamentManager {
         TournamentRepository repository
     ) {
 
-        this.repository =
-            repository;
-
-        tournaments =
-            repository.load();
+        this.repository = repository;
+        tournaments = repository.load();
 
         standingsService =
             new StandingsService(
@@ -24,10 +21,7 @@ public class TournamentManager {
     }
 
     private void save() {
-
-        repository.save(
-            tournaments
-        );
+        repository.save(tournaments);
     }
 
     public Tournament createTournament(
@@ -36,21 +30,12 @@ public class TournamentManager {
         ScheduleStrategy strategy
     ) {
 
-        for (
-            Tournament tournament
-            : tournaments
-        ) {
+        for (Tournament tournament : tournaments) {
 
-            if (
-                tournament
-                    .getName()
-                    .equalsIgnoreCase(
-                        name
-                    )
-            ) {
-
+            if (tournament.getName().equalsIgnoreCase(name)) {
                 throw new IllegalArgumentException(
-                    "A tournament with that name already exists."
+                    "A tournament named \"" + name
+                    + "\" already exists. Please choose a different tournament name."
                 );
             }
         }
@@ -62,10 +47,7 @@ public class TournamentManager {
                 strategy
             );
 
-        tournaments.add(
-            tournament
-        );
-
+        tournaments.add(tournament);
         save();
 
         return tournament;
@@ -75,25 +57,16 @@ public class TournamentManager {
         String name
     ) {
 
-        for (
-            Tournament tournament
-            : tournaments
-        ) {
+        for (Tournament tournament : tournaments) {
 
-            if (
-                tournament
-                    .getName()
-                    .equalsIgnoreCase(
-                        name
-                    )
-            ) {
-
+            if (tournament.getName().equalsIgnoreCase(name)) {
                 return tournament;
             }
         }
 
         throw new IllegalArgumentException(
-            "Tournament not found."
+            "No tournament named \"" + name
+            + "\" was found. Use View Tournaments to see the available tournament names."
         );
     }
 
@@ -102,10 +75,7 @@ public class TournamentManager {
         Team team
     ) {
 
-        tournament.addTeam(
-            team
-        );
-
+        tournament.addTeam(team);
         save();
     }
 
@@ -114,7 +84,6 @@ public class TournamentManager {
     ) {
 
         tournament.generateSchedule();
-
         save();
     }
 

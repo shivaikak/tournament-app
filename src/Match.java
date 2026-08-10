@@ -41,13 +41,13 @@ public class Match implements Serializable {
 
         if (!isReadyToPlay()) {
             throw new IllegalStateException(
-                "Both teams must be assigned before recording a score."
+                "This match is not ready to be scored yet. Both teams must be assigned first."
             );
         }
 
         if (homeScore < 0 || awayScore < 0) {
             throw new IllegalArgumentException(
-                "Scores cannot be negative."
+                "Scores cannot be negative. Please enter 0 or a positive whole number for both teams."
             );
         }
 
@@ -61,7 +61,7 @@ public class Match implements Serializable {
 
         if (!isCompleted()) {
             throw new IllegalStateException(
-                "Match has not been completed."
+                "A winner cannot be determined because this match has not been completed yet."
             );
         }
 
@@ -154,19 +154,21 @@ public class Match implements Serializable {
                 + matchNumber
                 + ": "
                 + home
-                + " "
+                + " (Home) "
                 + homeScore
                 + " - "
                 + awayScore
                 + " "
-                + away;
+                + away
+                + " (Away)";
         }
 
         return "Match "
             + matchNumber
             + ": "
             + home
-            + " vs "
-            + away;
+            + " (Home) vs "
+            + away
+            + " (Away)";
     }
 }

@@ -11,13 +11,13 @@ public class Team implements Serializable {
 
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException(
-                "Team ID cannot be empty."
+                "Team ID is missing. Please create the team with a valid ID."
             );
         }
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(
-                "Team name cannot be empty."
+                "Team name cannot be blank. Please enter a team name."
             );
         }
 
@@ -37,7 +37,7 @@ public class Team implements Serializable {
 
         if (newName == null || newName.isBlank()) {
             throw new IllegalArgumentException(
-                "Team name cannot be empty."
+                "The new team name cannot be blank. Please enter a valid team name."
             );
         }
 
