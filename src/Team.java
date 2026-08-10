@@ -33,16 +33,7 @@ public class Team implements Serializable {
         return name;
     }
 
-    public void updateInformation(String newName) {
 
-        if (newName == null || newName.isBlank()) {
-            throw new IllegalArgumentException(
-                "The new team name cannot be blank. Please enter a valid team name."
-            );
-        }
-
-        this.name = newName.trim();
-    }
 
     @Override
     public String toString() {
