@@ -165,6 +165,10 @@ public class TournamentCLI {
 
         System.out.println();
 
+         System.out.println(
+            "=== Choose Tournament Style ==="
+        );
+
         System.out.println(
             "1. Round Robin"
         );
@@ -211,7 +215,6 @@ public class TournamentCLI {
             "Tournament created successfully."
         );
 
-        waitForBack();
     }
 
     private void viewTournaments() {
